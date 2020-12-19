@@ -4,7 +4,7 @@ Author: Roee Hay / Aleph Research / HCL Technologies
 
 from serializable import *
 import json
-import ConfigParser
+import configparser
 DATA_PATH = "./data.json"
 USER_CONFIG_PATH = "./abootool.cfg"
 import io
@@ -41,30 +41,34 @@ class Config(Serializable):
         global config
         if not config:
             config = Config()
-            config.set_data(json.load(file(DATA_PATH, "rb")))
+            with open(DATA_PATH, "rb") as dataFile:
+                config.set_data(json.load(dataFile))
+                
+            data = "[root]\n"
+            with open(USER_CONFIG_PATH, "rb") as userConfig:
+                data += userConfig.read()
 
-            data = "[root]\n"+file(USER_CONFIG_PATH, "rb").read()
             fp = io.BytesIO(data)
-            parser = ConfigParser.RawConfigParser()
+            parser = configparser.RawConfigParser()
             parser.readfp(fp)
 
             cfg = {}
             for k in parser.options("root"):
                 try:
                     cfg[k] = parser.getboolean("root", k)
-                    continue;
+                    continue
                 except ValueError:
                     pass
 
                 try:
                     cfg[k] = parser.getint("root", k)
-                    continue;
+                    continue
                 except ValueError:
                     pass
 
                 try:
                     cfg[k] = parser.getfloat("root", k)
-                    continue;
+                    continue
                 except ValueError:
                     pass
 

@@ -5,7 +5,7 @@ Author: Roee Hay / Aleph Research / HCL Technologies
 import os
 import re
 from serializable import Serializable
-from adb import fastboot,common,usb_exceptions,adb_commands, sign_m2crypto
+from adb import fastboot,common,usb_exceptions,adb_commands, sign_cryptography
 from log import *
 from config import Config
 from enum import Enum
@@ -56,7 +56,8 @@ class Device:
     def adb_reboot_bootloader(self):
         I("adb: rebooting to bootloader")
         try:
-            self.adb().RebootBootloader()
+            self.adb_reboot_bootloader()
+            # self.adb().RebootBootloader()
             return
         except UnicodeDecodeError:
             # https://github.com/google/python-adb/issues/52
@@ -101,10 +102,10 @@ class Device:
                     I("adb: connected")
                     self.set_state(State.CONNECTED_ADB_DEVICE)
 
-                except usb1.USBErrorBusy as e:
-                    self.set_state(self.adb_get_state())
-                    if State.CONNECTED_ADB_DEVICE == self.state:
-                        I("adb: connected")
+                # except usb1. as e:
+                #     self.set_state(self.adb_get_state())
+                #     if State.CONNECTED_ADB_DEVICE == self.state:
+                #         I("adb: connected")
 
                 except usb1.USBError:
                     usbdev.Close()
@@ -132,11 +133,11 @@ class Device:
                 self.wait_for_device()
 
     def adb(self):
-        signer = sign_m2crypto.M2CryptoSigner(os.path.expanduser(Config.adb_key_path))
-        return adb_commands.AdbCommands.Connect(self.usbdev, rsa_keys=[signer])
+        signer = sign_cryptography.CryptographySigner(os.path.expanduser(Config.adb_key_path))
+        return adb_commands.AdbCommands._Connect(self.usbdev, rsa_keys=[signer])
 
     def fastboot(self):
-        return fastboot.FastbootCommands(self.usbdev)
+        return fastboot.FastbootCommands()
 
     def serial_number(self):
         self.wait_for_device()
@@ -222,7 +223,7 @@ class Device:
                 raise FastbootCommandNotFound()
             raise FastbootTimeoutException
 
-        except FastbootRemoteFailure, e:
+        except FastbootRemoteFailure as e:
             r = self.get_last_fb_output()
             error = e.msg
             if self.is_fb_error(error+r, cmd):
