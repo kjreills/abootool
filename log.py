@@ -12,7 +12,7 @@ con = logging.StreamHandler(sys.stderr)
 con.setFormatter(logging.Formatter('%(levelname)1s: %(message)s'))
 con.setLevel(level)
 
-logfile = logging.FileHandler(Config.log_file)
+logfile = logging.FileHandler(Config.)
 logfile.setFormatter(logging.Formatter('%(asctime)-15s %(levelname)5s: %(message)s'))
 logfile.setLevel(logging.DEBUG)
 

@@ -84,7 +84,7 @@ def dump_data(data):
     keys = data.keys()
     keys.sort()
     nkeys = len(keys)
-    for i in xrange(0, nkeys - 1, 2):
+    for i in range(0, nkeys - 1, 2):
         I("%17s: %3d    %17s: %3d", keys[i], len(data[keys[i]]), keys[i + 1], len(data[keys[i + 1]]))
 
     if 1 == nkeys % 2:

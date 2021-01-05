@@ -43,14 +43,13 @@ class Config(Serializable):
             config = Config()
             with open(DATA_PATH, "rb") as dataFile:
                 config.set_data(json.load(dataFile))
-                
-            data = "[root]\n"
-            with open(USER_CONFIG_PATH, "rb") as userConfig:
-                data += userConfig.read()
 
-            fp = io.BytesIO(data)
-            parser = configparser.RawConfigParser()
-            parser.readfp(fp)
+            # with open(USER_CONFIG_PATH, "rb") as userConfig:
+            #     data = userConfig.read()
+
+            # fp = io.BytesIO(data)
+            parser = configparser.ConfigParser()
+            parser.read(USER_CONFIG_PATH)
 
             cfg = {}
             for k in parser.options("root"):

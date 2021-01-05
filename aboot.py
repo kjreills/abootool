@@ -26,10 +26,10 @@ def get_bootloaders(path=Config.data_path):
         if f.endswith(".json"):
             bl = ABOOT.create_from_json(os.path.join(path, f))
             bootloaders.append(bl)
-            if not bootloaders_by_oem.has_key(bl.oem):
+            if not bl.oem in bootloaders_by_oem:
                 bootloaders_by_oem[bl.oem] = []
             bootloaders_by_oem[bl.oem].append(bl)
-            if not bootloaders_by_device.has_key(bl.device):
+            if not bl.device in bootloaders_by_device:
                 bootloaders_by_device[bl.device] = []
             bootloaders_by_device[bl.device].append(bl)
             n+=1
